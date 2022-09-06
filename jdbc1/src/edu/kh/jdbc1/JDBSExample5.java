@@ -24,31 +24,32 @@ public class JDBSExample5 {
 		ResultSet rs = null;
 		
 		try {
+			System.out.print("입사일 입력(YYYY-MM-DD) >> ");
+			String inputDate = sc.next(); // 띄어쓰기가 없으므로 next()로 입력받기 가능
+			System.out.println();
 			
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			String url = "jdbc:oracle:thin:@localhost:1521:XE";
 			String user = "kh_ksh";
 			String pw = "kh1234";
+			
 			conn = DriverManager.getConnection(url, user, pw);
 
-			
-			
-			System.out.print("입사일 입력(예시:2022-09-06) >> ");
-			String inputDate = sc.nextLine();
-			
+								
 			String sql = "SELECT EMP_NAME, "
 					+ " TO_CHAR(HIRE_DATE, 'YYYY\"년\" MM\"월\" DD\"일\"') 입사일, "
 					+ "	DECODE(SUBSTR(EMP_NO,8,1), '1', 'M', '2', 'F') 성별 "
 					+ " FROM EMPLOYEE"
 					+ " WHERE HIRE_DATE < TO_DATE('"+inputDate+"')"
 					+ " ORDER BY 2";
-			
+			// \" -> escape문자. 문자열 내부에 쌍 따옴표 작성시 '\ 백 슬래시'			
 			
 			stmt = conn.createStatement();
 			rs = stmt.executeQuery(sql);
 			
 			List<Employee> list = new ArrayList<>();
 			
+		
 			while (rs.next()) {
 				String empName = rs.getString("EMP_NAME");
 				String hireDate = rs.getString("입사일");
@@ -57,7 +58,8 @@ public class JDBSExample5 {
 				list.add(new Employee(empName, hireDate, gender));
 			}
 			
-			if(list.isEmpty()) {
+		
+			if(list.isEmpty()) { 
 				System.out.println("조회되는 정보가 없습니다.");
 			} else {
 				for( Employee emp : list) {
@@ -72,6 +74,7 @@ public class JDBSExample5 {
 				if(rs != null) rs.close();
 				if(stmt != null) stmt.close();
 				if(conn != null) conn.close();
+				
 			} catch(SQLException e) {
 				e.printStackTrace();
 			}

@@ -1,6 +1,6 @@
 package edu.kh.jdbc1.model.vo;
 
-// JDBCExample4
+// JDBCExample4, 5
 public class Employee {
 	
 	private String empName;
@@ -9,7 +9,10 @@ public class Employee {
 	private int anuualIncome;
 	private String hireDate;
 	private String gender; 
-
+ /* private char gender  
+    : DB에서는 문자, 문자열이 따로 나뉘지 않기 때문에
+    자바에서 쓰는 char형태의 문자를 받아오려면 생각이 필요*/
+	
 	public Employee() {	}
 
 	public Employee(String empName, String jobName, int salary, int anuualIncome) {
