@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import edu.kh.emp.model.vo.Employee;
@@ -162,6 +164,10 @@ public class EmployeeDAO {
 	}
 
 
+	/** 주민번호가 일치하는 사원 찾기
+	 * @param empNo
+	 * @return emp
+	 */
 	public Employee selectEmpNo(String empNo) {
 		Employee emp = null;
 		
@@ -189,6 +195,7 @@ public class EmployeeDAO {
 			// PreparedStatement 객체 생성
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, empNo);
+		
 			
 			rs = pstmt.executeQuery(); 
 			// 여기서 executeQuery()에 sql은 위에서 이미 적재된 상태기 때문에 생략
@@ -235,6 +242,7 @@ public class EmployeeDAO {
 			
 			Class.forName(driver);
 			conn = DriverManager.getConnection(url, user, pw);
+			conn.setAutoCommit(false); // AutoCommit 비활성화
 			
 			/* DML수행 
 			 - 트랜잭션에 DML 구문이 임시 저장
@@ -246,7 +254,6 @@ public class EmployeeDAO {
 			 - AutoCommit 비활성화하더라도 conn.close()가 수행되면 자동으로 Commit수행
 			   따라서 close() 수행 전 트랜잭션 제어 코드 작성이 필요!!!! */
 			
-			conn.setAutoCommit(false); // AutoCommit 비활성화
 	
 			String sql = "INSERT INTO EMPLOYEE VALUES(?,?,?,?,?,?,?,?,?,?,?, SYSDATE, NULL, DEFAULT)";
 																		//default :  퇴사 여부 컬럼의 기본값
@@ -266,7 +273,7 @@ public class EmployeeDAO {
 	        
 	        result = pstmt.executeUpdate();
 	        // executeUpdate() : SQL 수행 후에 결과 행 개수 반환
-			// executeQuer() :  SELECT 수행 후 ResultSet반환
+			// executeQuery() :  SELECT 수행 후 ResultSet반환
 			
 	        
 	        // close() 수행 전 트랜잭션 제어 코드
@@ -369,4 +376,194 @@ public class EmployeeDAO {
 		return result;
 	}
 
+
+	/**  입력 받은 부서와 일치하는 모든 사원 정보 
+	 * @param deptTitle
+	 * @return
+	 */
+	public List<Employee> selectDeptEmp(String deptTitle) {
+		List<Employee> empList = new ArrayList<>();
+		
+		try { 
+			
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, pw);
+			conn.setAutoCommit(false);
+			
+			String sql = "SELECT EMP_ID, EMP_NAME, EMP_NO, EMAIL, PHONE, DEPT_TITLE, JOB_NAME, SALARY"
+					+ " FROM EMPLOYEE"
+					+ " LEFT JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID)"
+					+ " JOIN JOB USING(JOB_CODE)"
+					+ " WHERE DEPT_TITLE = ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, deptTitle);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				int empId = rs.getInt("EMP_ID");
+				String empName = rs.getString("EMP_NAME");
+				String empNo = rs.getString("EMP_NO");
+				String email = rs.getString("EMAIL");
+				String phone = rs.getString("PHONE");
+				String jobName = rs.getString("JOB_NAME");
+				int salary = rs.getInt("SALARY");
+				
+				Employee emp = new Employee(empId, empName, empNo, email, phone, deptTitle, jobName, salary);
+				empList.add(emp);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn !=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		return empList;
+	}
+
+
+	/** 입력 받은 급여 이상을 받는 모든 사원 정보
+	 * @param inputSalary
+	 * @return
+	 */
+	public List<Employee> selectSalaryEmp(int inputSalary) {
+	
+	List<Employee> empList = new ArrayList<>();
+		try { 
+			
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, pw);
+			conn.setAutoCommit(false);
+			
+			String sql = "SELECT EMP_ID, EMP_NAME, EMP_NO, EMAIL, PHONE, DEPT_TITLE, JOB_NAME, SALARY"
+					+ " FROM EMPLOYEE"
+					+ " LEFT JOIN DEPARTMENT ON(DEPT_CODE = DEPT_ID)"
+					+ " JOIN JOB USING(JOB_CODE)"
+					+ " WHERE SAlARY > ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, inputSalary);
+			rs = pstmt.executeQuery();
+
+			while (rs.next()) {
+				int empId = rs.getInt("EMP_ID");
+				String empName = rs.getString("EMP_NAME");
+				String empNo = rs.getString("EMP_NO");
+				String email = rs.getString("EMAIL");
+				String phone = rs.getString("PHONE");
+				String deptTitle = rs.getString("DEPT_TITLE");
+				String jobName = rs.getString("JOB_NAME");
+				int salary = rs.getInt("SALARY");
+				
+				Employee emp = new Employee(empId, empName, empNo, email, phone, deptTitle, jobName, salary);
+				empList.add(emp);
+			}
+			
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn !=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		return empList;
+	    
+
+	}
+
+
+	public Map<String, Integer> selectDeptTotalSalary() {
+		
+		Map<String, Integer> dept = new HashMap<>();
+		
+		try { 
+			
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, pw);
+			
+			String sql = "SELECT DEPT_TITLE, SUM(SALARY) SUM"
+					+ " FROM EMPLOYEE "
+					+ " JOIN DEPARTMENT ON (DEPT_ID = DEPT_CODE)"
+					+ " GROUP BY DEPT_TITLE";
+
+			stmt =conn.createStatement();
+			rs = stmt.executeQuery(sql);
+
+			while (rs.next()) {
+				String deptTitle = rs.getString("DEPT_TITLE");
+				int sum = rs.getInt("SUM");
+				
+				dept.put(deptTitle, sum);
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt !=null) pstmt.close();
+				if(conn !=null) conn.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}			
+		return dept;
+	}
+
+
+	public Map<String, Double> selectJobAvgSalary() {
+		Map<String, Double> job = new HashMap<>();
+		
+		try {
+			Class.forName(driver);
+			conn = DriverManager.getConnection(url, user, pw);
+			
+			String sql = "SELECT JOB_NAME, AVG(SALARY) AVG"
+					+ " FROM EMPLOYEE"
+					+ " JOIN JOB USING (JOB_CODE)"
+					+ " GROUP BY JOB_NAME " ;
+			
+			stmt =conn.createStatement();
+			rs = stmt.executeQuery(sql);
+			
+			while (rs.next()) {
+				
+				String jobName = rs.getString("JOB_NAME");
+				double avg = rs.getDouble("AVG");
+				
+				job.put(jobName, avg);
+				
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(stmt != null) stmt.close();
+				if(conn != null) conn.close();
+			} catch(Exception e) {
+				e.printStackTrace();
+			}
+			
+		}
+		 
+		
+		
+		
+		return job;
+	}
 }
