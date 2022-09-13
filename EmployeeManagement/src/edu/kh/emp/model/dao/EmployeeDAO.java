@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -485,9 +486,13 @@ public class EmployeeDAO {
 	}
 
 
+	/** 부서별 급여 합계
+	 * @return
+	 */
 	public Map<String, Integer> selectDeptTotalSalary() {
 		
 		Map<String, Integer> dept = new HashMap<>();
+		
 		
 		try { 
 			
@@ -524,8 +529,11 @@ public class EmployeeDAO {
 	}
 
 
+	/** 직급별 급여 평균
+	 * @return
+	 */
 	public Map<String, Double> selectJobAvgSalary() {
-		Map<String, Double> job = new HashMap<>();
+		Map<String, Double> job = new LinkedHashMap<>();
 		
 		try {
 			Class.forName(driver);

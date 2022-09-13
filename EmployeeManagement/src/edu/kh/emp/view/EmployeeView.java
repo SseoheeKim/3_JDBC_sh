@@ -310,17 +310,27 @@ public class EmployeeView {
 	 * -> DB 조회 결과를 HashMap<String, Integer>에 옮겨 담아서 반환하고
 	 * 부서코드, 급여 합 조회
 	 */
+//	public void selectDeptTotalSalary() {
+//		 System.out.println(" [ 부서별 급여 합 전체 조회 ]");
+//		 
+//		 Map<String, Integer> dept = dao.selectDeptTotalSalary();
+//		 
+//		 System.out.println(" 부서별     |     급여 합 ");
+//		 System.out.println("-----------------------------------");
+//		 
+//		 for( String key : dept.keySet()) {
+//			 System.out.printf(" %6s  |   %d \n", key, dept.get(key));
+//		 }
+//	}
+	
 	public void selectDeptTotalSalary() {
-		 System.out.println(" [ 부서별 급여 합 전체 조회 ]");
-		 
-		 Map<String, Integer> dept = dao.selectDeptTotalSalary();
-		 
-		 System.out.println(" 부서별     |     급여 합 ");
-		 System.out.println("-----------------------------------");
-		 
-		 for( String key : dept.keySet()) {
-			 System.out.printf(" %6s  |   %d \n", key, dept.get(key));
-		 }
+		System.out.println("<부서별 급여 합 전체 조회>");
+		Map<String ,Integer> map = dao.selectDeptTotalSalary();
+		
+		for(String key : map.keySet()) {
+			Object value = map.get(key);
+			System.out.println(key + " : " + value + "원");
+		}
 	}
 
 	
