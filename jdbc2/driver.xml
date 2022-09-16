@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>driver.xml file</comment>
+	
+	<!-- 마크업 언어의 주석 -->
+	<!-- Ctrl + Shift + / -->	
+	
+	<!-- entry는 Key:Value 한쌍이고, value값 넣을 때 공백 주의
+	 앞 뒤로 띄어쓰기를 하면 다른 문자열로 인식됨 -->
+
+	<entry key = "driver">oracle.jdbc.driver.OracleDriver</entry>
+	<entry key = "url">jdbc:oracle:thin:@localhost:1521:xe</entry> 
+	<entry key = "user">kh_ksh</entry>
+	<entry key = "password">kh1234</entry>
+	
+</properties>
