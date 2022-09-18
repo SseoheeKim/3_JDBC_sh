@@ -42,8 +42,6 @@ public class TestDao {
 	}
 	
 	
-	
-	
 	/** 1행 삽입 DAO
 	 * @param conn
 	 * @param vo1
