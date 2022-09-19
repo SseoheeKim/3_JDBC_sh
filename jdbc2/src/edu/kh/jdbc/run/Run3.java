@@ -20,34 +20,32 @@ public class Run3 {
 		
 		TestService service = new TestService();
 		
+		System.out.print("수정할 번호 입력 : ");
+		int testNo = sc.nextInt();
+		sc.nextLine();
+		
+		System.out.print("제목: ");
+		String testTitle = sc.nextLine();
+		
+		System.out.print("내용 : ");
+		String testContent = sc.nextLine();
+		
+		TestVo vo = new TestVo(testNo, testTitle, testContent);
+		
 		try {
-			System.out.print("수정할 번호 입력 : ");
-			int testNo = sc.nextInt();
-			sc.nextLine();
-			
-			System.out.print("제목: ");
-			String testTitle = sc.nextLine();
-			
-			System.out.print("내용 : ");
-	        String testContent = sc.nextLine();
-			
-	        TestVo vo = new TestVo(testNo, testTitle, testContent);
 	        
 	        int result = service.update(vo);
-			
-			if(result > 0) {
+	        	
+	        if(result > 0) {
 				System.out.println("수정되었습니다.");
-			} else {
-				System.out.println("수정 실패");
-			}
-		
-		} catch(Exception e) {
+	        } else {
+				System.out.println("일치하는 번호가 없습니다.");
+	        }
+	         
+	    } catch(Exception e) {
 			System.out.println("수정 중 예외가 발생하였습니다.");
 			e.printStackTrace();
 		}
-		
-		
-		
 
 	}
 
