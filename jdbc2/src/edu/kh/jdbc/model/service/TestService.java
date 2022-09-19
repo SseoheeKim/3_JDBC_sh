@@ -109,19 +109,21 @@ public class TestService {
 
 
 
-	public int update(TestVo vo) {
+	/** 번호가 일치하는 행 제목, 내용 수정 서비스
+	 * @param vo
+	 * @return result
+	 * @throws Exception
+	 */
+	public int update(TestVo vo) throws Exception{
 		Connection conn = getConnection();
-		int result = 0;
 		
-		try {
-			result = dao.update(conn, vo);
+		int result = dao.update(conn, vo);
+		
+		if(result > 0) commit(conn);
+		else		   rollback(conn);
 			
-			if(result > 0) commit(conn);
-			else		   rollback(conn);
-			
-		} finally {
-			close(conn);
-		}
+		close(conn);
+		
 		return result;
 	}
 
