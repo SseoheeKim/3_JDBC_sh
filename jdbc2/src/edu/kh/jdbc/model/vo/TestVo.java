@@ -5,7 +5,7 @@ public class TestVo {
 	private String testTitle;
 	private String testContent;
 	
-	TestVo(){ }
+	public TestVo() { }
 
 	public TestVo(int testNo, String testTitle, String testContent) {
 		super();
@@ -13,6 +13,7 @@ public class TestVo {
 		this.testTitle = testTitle;
 		this.testContent = testContent;
 	}
+
 
 	public int getTestNo() {
 		return testNo;
