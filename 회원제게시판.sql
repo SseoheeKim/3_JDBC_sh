@@ -53,8 +53,6 @@ INSERT INTO MEMBER VALUES (SEQ_MEMBER_NO.NEXTVAL, 'user02', 'pass02', '유저2',
 INSERT INTO MEMBER VALUES (SEQ_MEMBER_NO.NEXTVAL, 'user03', 'pass03', '유저3', 'F', DEFAULT, DEFAULT);
 COMMIT;
 
-SELECT * FROM MEMBER;
-
 
 -- 아이디 중복 확인
 -- 단, 중복 되는 아이디가 입력되었을 때 탈퇴한 계정이면 중복 X
@@ -71,5 +69,50 @@ FROM MEMBER
 WHERE MEMBER_ID = 'user01'
 AND MEMBER_PW = 'pass01'
 AND SECESSION_FL = 'N';
+
+
+--회원 목록을 조회(탈퇴회원 제외), 가입일 내림차순으로 조회
+SELECT MEMBER_ID, MEMBER_NM, MEMBER_GENDER
+FROM MEMBER
+WHERE SECESSION_FL = 'N'
+ORDER BY MEMBER_NO DESC; --> ENROLL_DATE 대신에 시퀀스 넘버를 사용
+
+-- 회원 수정
+UPDATE MEMBER SET MEMBER_NM = '유저1', MEMBER_GENDER = 'M'
+WHERE MEMBER_NO = 1; --> PK 사용
+
+
+-- 비밀번호 수정
+UPDATE MEMBER SET MEMBER_PW = 'pass1'
+WHERE MEMBER_NO = 1
+AND MEMBER_PW = '현재 비밀번호';
+
+-- 회원탈퇴
+-- 탈퇴 여부를 'Y'로 변경해 확인
+UPDATE MEMBER SET SECESSION_FL = 'Y'
+WHERE MEMBER_NO = --loginMember.getLoginNo()
+AND MEMBER_PW = '현재 비밀번호';
+
+
+SELECT * FROM MEMBER;
+
+COMMIT;
+ROLLBACK;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

@@ -4,7 +4,7 @@ import static edu.kh.jdbc.common.JDBCTemplate.*;
 
 import java.sql.Connection;
 
-import edu.kh.jdbc.main.dao.MainDao;
+import edu.kh.jdbc.main.model.dao.MainDao;
 import edu.kh.jdbc.member.vo.Member;
 
 // Service : 데이터 가공, 트랜잭션 제어 처리

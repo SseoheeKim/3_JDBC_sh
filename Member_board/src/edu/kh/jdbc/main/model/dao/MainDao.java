@@ -1,4 +1,4 @@
-package edu.kh.jdbc.main.dao;
+package edu.kh.jdbc.main.model.dao;
 
 import static edu.kh.jdbc.common.JDBCTemplate.*;
 

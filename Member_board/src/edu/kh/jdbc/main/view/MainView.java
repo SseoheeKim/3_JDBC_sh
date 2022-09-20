@@ -3,20 +3,31 @@ package edu.kh.jdbc.main.view;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import edu.kh.jdbc.board.view.BoardView;
 import edu.kh.jdbc.main.model.service.MainService;
+import edu.kh.jdbc.member.view.MemberView;
 import edu.kh.jdbc.member.vo.Member;
 
 // 메인 화면(입/출력)
 public class MainView {
 	private Scanner sc = new Scanner(System.in);
 	private MainService service = new MainService();
-
+	
+	  
+	
+	
+	
 	// 로그인 된 회원 정보를 저장한 객체를 참조하는 참조변수
 	// -> 로그인X == null, 로그인O != null
-	private Member loginMember = null;
-
+	// private Member loginMember = null;
+	public static Member loginMember = null;
+	
+	
+	// 회원 기능 메뉴
+	private MemberView memberView = new MemberView();
+	
 	/**
-	 * main메뉴 출력 메서드
+	 * mainMenu 출력 메서드
 	 */
 	public void mainMenu() {
 		int input = -1;
@@ -29,7 +40,7 @@ public class MainView {
 					System.out.println("\n*****회원제 게시판 프로그램 *****");
 					System.out.println("1. 로그인");
 					System.out.println("2. 회원가입");
-					System.out.println("0. 프로그램 종류");
+					System.out.println("0. 프로그램 종료");
 
 					System.out.print("\n메뉴선택 >> ");
 					input = sc.nextInt();
@@ -53,8 +64,9 @@ public class MainView {
 					input = sc.nextInt();
 					
 					switch(input) {
-					case 1 : break;
-					case 2 : break;
+					
+					case 1 : memberView.memberMenu(loginMember); break;
+					case 2 : BoardView.boardMenu(loginMember); break;
 					case 0 : loginMember = null; // loginMember == null (참조하는 객체가 없으면 로그아웃)
 							 System.out.println("\n[로그아웃 되었습니다.]");
 							 input = -1; // do-while문 종료 방지 플래그
