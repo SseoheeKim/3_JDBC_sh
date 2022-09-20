@@ -9,10 +9,11 @@ import edu.kh.jdbc.member.vo.Member;
 
 public class BoardView {
 	
-	private Scanner sc = new Scanner(System.in);
+	public static Scanner sc = new Scanner(System.in);
 	private BoardService service = new BoardService();
 	
-	public void boardMenu(Member loginMember) {
+	
+	public static void boardMenu(Member loginMember) {
 		
 		int input = -1;
 		
