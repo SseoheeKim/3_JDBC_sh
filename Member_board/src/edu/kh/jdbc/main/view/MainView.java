@@ -13,18 +13,16 @@ public class MainView {
 	private Scanner sc = new Scanner(System.in);
 	private MainService service = new MainService();
 	
-	  
 	
-	
-	
+	public static Member loginMember = null; 	
 	// 로그인 된 회원 정보를 저장한 객체를 참조하는 참조변수
 	// -> 로그인X == null, 로그인O != null
 	// private Member loginMember = null;
-	public static Member loginMember = null;
 	
-	
+		
 	// 회원 기능 메뉴
 	private MemberView memberView = new MemberView();
+	private BoardView boardView = new BoardView();
 	
 	/**
 	 * mainMenu 출력 메서드
@@ -66,7 +64,8 @@ public class MainView {
 					switch(input) {
 					
 					case 1 : memberView.memberMenu(loginMember); break;
-					case 2 : BoardView.boardMenu(loginMember); break;
+					case 2 : boardView.boardMenu(); break;
+							// 회원정보가 필요한 경우, static loginMember 필드를 얻어와 사용할 예정
 					case 0 : loginMember = null; // loginMember == null (참조하는 객체가 없으면 로그아웃)
 							 System.out.println("\n[로그아웃 되었습니다.]");
 							 input = -1; // do-while문 종료 방지 플래그
