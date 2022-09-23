@@ -105,6 +105,22 @@ public class BoardService {
 
 
 
+	/** 새 게시글 작성 서비스
+	 * @param board
+	 * @return result
+	 * @throws Exception
+	 */
+	public int insertBoard(Board board) throws Exception {
+		Connection conn = getConnection();
+		int result = dao.insertBoard(conn, board);
+		if(result > 0) commit(conn);
+		else 		rollback(conn);
+		close(conn);
+		return result;
+	}
+
+
+
 	
 	
 

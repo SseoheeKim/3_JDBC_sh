@@ -51,4 +51,10 @@
 		UPDATE "BOARD" SET DELETE_FL = 'Y' WHERE BOARD_NO = ?
 	</entry>
 	
+	<!-- 새 게시글 작성 -->
+	<entry key = "insertBoard">
+		INSERT INTO BOARD 
+		VALUES(SEQ_BOARD_NO.NEXTVAL, ?, ?, DEFAULT, DEFAULT, DEFAULT, ?)
+	</entry>
+	
 </properties>

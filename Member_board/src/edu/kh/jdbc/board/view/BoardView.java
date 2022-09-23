@@ -21,9 +21,8 @@ public class BoardView {
 	private BoardService bService = new BoardService();
 	private CommentService cService = new CommentService();
 	
-	
-	/** 게시판 기능 메뉴
-	 * @param loginMember
+	/** 
+	 * 게시판 기능 메뉴
 	 */
 	public void boardMenu() {
 		int input = -1;
@@ -46,8 +45,8 @@ public class BoardView {
 				switch(input) {
 				case 1 : selectAllBoard(); break; // 게시글 목록 조회 
 				case 2 : selectBoard(); break; // 게시글 상세 조회
-				case 3 : break;
-				case 4 : break;
+				case 3 : insertBoard(); break; // 게시글 작성
+				case 4 : searchBoard(); break; // 게시글 검색
 				case 0 : System.out.println("\n메인메뉴로 이동합니다."); break;
 				default : System.out.println("\n메뉴에 있는 번호를 선택하세요.");
 				
@@ -61,20 +60,83 @@ public class BoardView {
 			
 		} while (input != 0); 
 		
-		
-		
-				/* 3. 게시글 작성(제목, 내용 INSERT) 
-				 *    -> 작성 성공 시 상세 조회 수행
-				 * 
-				 * 4. 게시글 검색(제목, 내용, 제목+내용, 작성자)
-				 * 
-				 * */
+	}
+
 	
+
+	
+	/**
+	 * 게시글 검색(제목, 내용, 제목+내용, 작성자)
+	 */
+	private void searchBoard() {
+		System.out.println("\n[게시글 검색]");
+		
 	}
 
 
 
-	
+
+	/**
+	 * 게시글 작성(제목, 내용 INSERT) 
+	 * -> 작성 성공 시 상세 조회 수행
+	 * @param memberNo 
+	 */
+	private void insertBoard() {
+		
+		try {
+			
+			System.out.println("\n[새로운 게시글 작성]");
+			
+			System.out.print("제목 : ");
+			String boardTitle = sc.nextLine();
+				
+			System.out.print("내용 : ");
+			String boardContent = sc.nextLine();
+			
+			Board board =  new Board();
+			board.setBoardTitle(boardTitle);
+			board.setBoardContent(boardContent);
+			board.setMemberNo(MainView.loginMember.getMemberNo());
+				
+			int result = bService.insertBoard(board);
+			
+			// 보드리스트로 묶어서 가져오기...???
+			if(result > 0) {
+				System.out.println("\n새 게시글이 업로드 되었습니다.");
+				
+				if (board != null) {
+			            System.out.println("--------------------------------------------------------");
+			            System.out.printf("글번호 : %d \n제목 : %s\n", board.getBoardNo(), board.getBoardTitle());
+			            System.out.printf("작성자 : %s | 작성일 : %s  \n조회수 : %d\n", 
+			                  board.getMemberName(), board.getCreateDate(), board.getReadCount());
+			            System.out.println("--------------------------------------------------------\n");
+			            System.out.println(board.getBoardContent());
+			            System.out.println("\n--------------------------------------------------------");
+
+			          
+			             // 댓글 목록
+			             if(!board.getCommentList().isEmpty()) {
+			                for(Comment c : board.getCommentList()) {
+			                   System.out.printf("댓글번호: %d   작성자: %s  작성일: %s\n%s\n",
+			                         c.getCommentNo(), c.getMemberName(), c.getCreateDate(), c.getCommentContent());
+			                   System.out.println(" --------------------------------------------------------");
+			                }
+			             }
+				}   
+				} else {
+					System.out.println("\n게시글 업로드 실패 ");
+				}
+				
+			
+		} catch (Exception e) {
+			System.out.println("\n게시글 작성 중 예외 발생");
+			e.printStackTrace();
+		}
+		
+	}
+
+
+
 	/**
 	 * 게시글 목록 조회(작성일 내림차순)
 	 */
@@ -88,8 +150,9 @@ public class BoardView {
 			if(boardList.isEmpty()) {
 				System.out.println("게시글이 존재하지 않습니다.");
 			} else {
+				System.out.println("번호|     제목[댓글수]      |  작성자  |   작성일  |  조회수");
 				for(Board b : boardList) {
-				System.out.printf(" %3d  |    %10s[%d]  |   %s   |      %s      |   %d  \n" ,
+				System.out.printf(" %d |  %s[%d]      |  %s  | %s | %d \n" ,
 								b.getBoardNo(),  b.getBoardTitle() , b.getCommentCount(), 
 								b.getMemberName(), b.getCreateDate(), b.getReadCount());
 				}	
@@ -235,6 +298,39 @@ public class BoardView {
 
 
 
+	
+	/** 게시글 수정
+	 * @param boardNo
+	 */
+	private void updateBoard(int boardNo) {
+		try {
+			
+			System.out.println("\n[게시글 수정]");
+			
+			System.out.println("수정할 게시글 제목 : ");
+			String boardTitle = sc.nextLine();
+			
+			System.out.println("수정할 게시글 내용 : ");
+			String boardContent = sc.nextLine();
+			
+			Board board = new Board();
+			board.setBoardNo(boardNo);
+			board.setBoardTitle(boardTitle);
+			board.setBoardContent(boardContent);
+			
+			int result = bService.updateBoard(board);
+			
+			if(result > 0) {
+				System.out.println("\n게시글이 수정되었습니다.");
+			} else {
+				System.out.println("\n게시글 수정 실패");
+			}
+		} catch(Exception e) {
+			System.out.println("\n게시글 수정 중 예외 발생");
+			e.printStackTrace();
+		}
+		
+	}
 
 	/** 게시글 삭제
 	 * @param boardNo
@@ -270,39 +366,6 @@ public class BoardView {
 
 
 
-
-	/** 게시글 수정
-	 * @param boardNo
-	 */
-	private void updateBoard(int boardNo) {
-		try {
-			
-			System.out.println("\n[게시글 수정]");
-			
-			System.out.println("수정할 게시글 제목 : ");
-			String boardTitle = sc.nextLine();
-			
-			System.out.println("수정할 게시글 내용 : ");
-			String boardContent = sc.nextLine();
-			
-			Board board = new Board();
-			board.setBoardNo(boardNo);
-			board.setBoardTitle(boardTitle);
-			board.setBoardContent(boardContent);
-			
-			int result = bService.updateBoard(board);
-			
-			if(result > 0) {
-				System.out.println("\n게시글이 수정되었습니다.");
-			} else {
-				System.out.println("\n게시글 수정 실패");
-			}
-		} catch(Exception e) {
-			System.out.println("\n게시글 수정 중 예외 발생");
-			e.printStackTrace();
-		}
-		
-	}
 
 
 
