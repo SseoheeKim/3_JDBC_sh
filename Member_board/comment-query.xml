@@ -12,4 +12,21 @@
 		AND BOARD_NO = ?
 		ORDER BY 1
 	</entry>
+	
+	
+	<!-- 댓글 추가 -->
+	<entry key = "insertComment">
+		INSERT INTO "COMMENT" 
+		VALUES(SEQ_COMMENT_NO.NEXTVAL, ?, DEFAULT, DEFAULT, ?, ?)
+	</entry>
+	
+	<!-- 댓글 수정 -->
+	<entry key = "updateComment">
+		UPDATE "COMMENT" SET COMMENT_CONTENT = ? WHERE COMMENT_NO = ?
+	</entry>
+	
+	<!-- 댓글 삭제 -->
+	<entry key ="deleteComment">
+		UPDATE "COMMENT" SET DELETE_FL = 'Y' WHERE COMMENT_NO = ?
+	</entry>
 </properties>
