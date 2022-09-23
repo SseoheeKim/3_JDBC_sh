@@ -160,7 +160,7 @@ CREATE TABLE "COMMENT" (
 	CONSTRAINT COMMENT_PK PRIMARY KEY(COMMENT_NO)
 );
 
-
+SELECT * FROM "COMMENT";
 COMMENT ON COLUMN "COMMENT".COMMENT_NO IS '댓글 번호';
 COMMENT ON COLUMN "COMMENT".COMMENT_CONTENT IS '댓글 내용';
 COMMENT ON COLUMN "COMMENT".CREATE_DT IS '댓글 작성일';
@@ -185,6 +185,14 @@ VALUES (SEQ_COMMENT_NO.NEXTVAL, '샘플 댓글 3번', DEFAULT, DEFAULT, 3, 3);
 COMMIT;
 
 
+-- 댓글 수정
+UPDATE "COMMENT" SET COMMENT_CONTENT = 123 WHERE COMMENT_NO = 4;
+
+COMMIT;
+-- 댓글 삭제
+DELETE FROM "COMMENT" WHERE COMMENT_NO = 3 AND MEMBER_NO = 3;  
+SELECT * FROM "COMMENT";
+ROLLBACK;
 -- 게시글 목록 상세 조회(댓글 수 포함)
 SELECT BOARD_NO, BOARD_TITLE, BOARD_CONTENT, MEMBER_NM, READ_COUNT, 
 	CASE  
@@ -205,7 +213,7 @@ ORDER BY BOARD_NO DESC;
 -- 스칼라 서브쿼리를 사용 시 해석 순서가 메인 쿼리-> 서브쿼리로 해석
 -- 별칭을 통한 구분
 
-
+DELETE_FL = 'Y'
 --------------------------------------------------------------------------------
 
 -- 24시간 차이 == 1
