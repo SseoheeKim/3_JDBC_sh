@@ -2,6 +2,7 @@ package edu.kh.jdbc.board.view;
 
 
 import java.util.ArrayList;
+
 import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
@@ -46,8 +47,8 @@ public class BoardView {
 				case 1 : selectAllBoard(); break; // 게시글 목록 조회 
 				case 2 : selectBoard(); break; // 게시글 상세 조회
 				case 3 : insertBoard(); break; // 게시글 작성
-				case 4 : searchBoard(); break; // 게시글 검색
-				case 0 : System.out.println("\n메인메뉴로 이동합니다."); break;
+				case 4 : searchBoard(); break; // 게시글 검색 -> 검색어가 포함되는 게시글의 목록을 조회
+				case 0 : System.out.println("\n메인메뉴(로그인메뉴)로 이동합니다."); break;
 				default : System.out.println("\n메뉴에 있는 번호를 선택하세요.");
 				
 				}
@@ -57,85 +58,10 @@ public class BoardView {
 				sc.nextLine();
 			}
 			
-			
 		} while (input != 0); 
-		
 	}
 
 	
-
-	
-	/**
-	 * 게시글 검색(제목, 내용, 제목+내용, 작성자)
-	 */
-	private void searchBoard() {
-		System.out.println("\n[게시글 검색]");
-		
-	}
-
-
-
-
-	/**
-	 * 게시글 작성(제목, 내용 INSERT) 
-	 * -> 작성 성공 시 상세 조회 수행
-	 * @param memberNo 
-	 */
-	private void insertBoard() {
-		
-		try {
-			
-			System.out.println("\n[새로운 게시글 작성]");
-			
-			System.out.print("제목 : ");
-			String boardTitle = sc.nextLine();
-				
-			System.out.print("내용 : ");
-			String boardContent = sc.nextLine();
-			
-			Board board =  new Board();
-			board.setBoardTitle(boardTitle);
-			board.setBoardContent(boardContent);
-			board.setMemberNo(MainView.loginMember.getMemberNo());
-				
-			int result = bService.insertBoard(board);
-			
-			// 보드리스트로 묶어서 가져오기...???
-			if(result > 0) {
-				System.out.println("\n새 게시글이 업로드 되었습니다.");
-				
-				if (board != null) {
-			            System.out.println("--------------------------------------------------------");
-			            System.out.printf("글번호 : %d \n제목 : %s\n", board.getBoardNo(), board.getBoardTitle());
-			            System.out.printf("작성자 : %s | 작성일 : %s  \n조회수 : %d\n", 
-			                  board.getMemberName(), board.getCreateDate(), board.getReadCount());
-			            System.out.println("--------------------------------------------------------\n");
-			            System.out.println(board.getBoardContent());
-			            System.out.println("\n--------------------------------------------------------");
-
-			          
-			             // 댓글 목록
-			             if(!board.getCommentList().isEmpty()) {
-			                for(Comment c : board.getCommentList()) {
-			                   System.out.printf("댓글번호: %d   작성자: %s  작성일: %s\n%s\n",
-			                         c.getCommentNo(), c.getMemberName(), c.getCreateDate(), c.getCommentContent());
-			                   System.out.println(" --------------------------------------------------------");
-			                }
-			             }
-				}   
-				} else {
-					System.out.println("\n게시글 업로드 실패 ");
-				}
-				
-			
-		} catch (Exception e) {
-			System.out.println("\n게시글 작성 중 예외 발생");
-			e.printStackTrace();
-		}
-		
-	}
-
-
 
 	/**
 	 * 게시글 목록 조회(작성일 내림차순)
@@ -150,9 +76,9 @@ public class BoardView {
 			if(boardList.isEmpty()) {
 				System.out.println("게시글이 존재하지 않습니다.");
 			} else {
-				System.out.println("번호|     제목[댓글수]      |  작성자  |   작성일  |  조회수");
+				
 				for(Board b : boardList) {
-				System.out.printf(" %d |  %s[%d]      |  %s  | %s | %d \n" ,
+				System.out.printf("\n%d | %s[%d] | %s | %s | %d\n" ,
 								b.getBoardNo(),  b.getBoardTitle() , b.getCommentCount(), 
 								b.getMemberName(), b.getCreateDate(), b.getReadCount());
 				}	
@@ -175,6 +101,7 @@ public class BoardView {
 			int boardNo = sc.nextInt();
 			sc.nextLine();
 			
+			// 게시글 상세조회 출력
 			Board board = bService.selectBoard(boardNo, MainView.loginMember.getMemberNo());
 														// -> 로그인 한 자신의 게시글을 조회했을 때 조회수 증가 방지
 			
@@ -332,6 +259,7 @@ public class BoardView {
 		
 	}
 
+	
 	/** 게시글 삭제
 	 * @param boardNo
 	 */
@@ -363,10 +291,6 @@ public class BoardView {
 		
 		
 	}
-
-
-
-
 
 
 
@@ -533,11 +457,123 @@ public class BoardView {
 	}
 	
 		
+	
+	/**
+	 * 게시글 등록 (제목, 내용 INSERT) 
+	 * -> 작성 성공 시 상세 조회 수행(현재 작성한 게시글의 '시퀀스 넘버' 사용)
+	 * @param memberNo 
+	 */
+	private void insertBoard() {
+		
+		try {
+			System.out.println("\n[새로운 게시글 등록]");
+			
+			System.out.print("제목 : ");
+			String boardTitle = sc.nextLine();
+			
+			System.out.print("내용 : ");
+			String boardContent = inputContent();
+			
+			// Board객체에 제목, 내용, 회원번호를 담아서 서비스에 전달
+			
+			Board board =  new Board();
+			board.setBoardTitle(boardTitle);
+			board.setBoardContent(boardContent);
+			board.setMemberNo(MainView.loginMember.getMemberNo());
+			
+			int result = bService.insertBoard(board);
+			// 0 또는 생성된 게시물 번호가 반환
+			
+			if(result > 0) {
+				System.out.println("\n\"새 게시글이 업로드 되었습니다.\"");
+				// 게시글 상세조회 출력
+				Board b = bService.selectBoard(result, MainView.loginMember.getMemberNo());
+															// -> 로그인 한 자신의 게시글을 조회했을 때 조회수 증가 방지
+				
+		        if (b != null) {
+		            System.out.println("--------------------------------------------------------");
+		            System.out.printf("글번호 : %d \n제목 : %s\n", b.getBoardNo(), b.getBoardTitle());
+		            System.out.printf("작성자 : %s | 작성일 : %s  \n조회수 : %d\n", 
+		                  b.getMemberName(), b.getCreateDate(), b.getReadCount());
+		            System.out.println("--------------------------------------------------------\n");
+		            System.out.println(b.getBoardContent());
+		            System.out.println("\n--------------------------------------------------------");
 
+		          
+		             // 댓글 목록
+		             if(!b.getCommentList().isEmpty()) {
+		                for(Comment c : b.getCommentList()) {
+		                   System.out.printf("댓글번호: %d   작성자: %s  작성일: %s\n%s\n",
+		                         c.getCommentNo(), c.getMemberName(), c.getCreateDate(), c.getCommentContent());
+		                   System.out.println(" --------------------------------------------------------");
+		                }
+		             }
+		             
+
+		             subBoardMenu(b);
+		             
+		          } else {
+		             System.out.println("[\n해당 번호의 게시글이 존재하지 않습니다.]\n");
+		          }
+				
+			} else {
+				System.out.println("\n\"게시글 업로드 실패\"");
+			}
+			
+			
+		} catch (Exception e) {
+			System.out.println("\n게시글 작성 중 예외 발생");
+			e.printStackTrace(); // 예외가 발생한 위치 출력
+		}
+		
+	}
 	
 	
 	
-	
+	/**
+	 * 게시글 검색(제목, 내용, 제목+내용, 작성자)
+	 */
+	private void searchBoard() {
+		
+		try {
+			System.out.println("\n[게시글 검색]");
+			
+			System.out.println("1) 제목");
+			System.out.println("2) 내용");
+			System.out.println("3) 제목 + 내용");
+			System.out.println("4) 작성자");
+			
+			System.out.print("\n검색 조건 선택 :");
+			int condition = sc.nextInt();
+			sc.nextLine();
+			
+			if(1 <= condition  && condition <= 4) {
+				System.out.println("검색어 입력 : ");
+				String query = sc.nextLine();
+				
+				// 검색 서비스 호출하고 결과 반환
+				List<Board> boardList = bService.searchBoard(condition, query);
+				
+				if(boardList.isEmpty()) {
+					System.out.println("\n검색결과가 없습니다.");
+				} else {
+					
+					for(Board b : boardList) {
+					System.out.printf("\n%d | %s[%d] | %s | %s | %d\n" ,
+									b.getBoardNo(),  b.getBoardTitle() , b.getCommentCount(), 
+									b.getMemberName(), b.getCreateDate(), b.getReadCount());
+					}	
+				}
+				
+			} else {
+				System.out.println("\n1 ~ 4번 사이의 숫자를 입력해 주세요");
+			}
+		
+		} catch(Exception e) {
+			System.out.println("\n게시물 검색 중 예외 발생\n");
+			e.printStackTrace();
+		}
+	}
 }
 
 
