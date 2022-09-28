@@ -16,13 +16,16 @@ public class MainView {
 	
 	public static Member loginMember = null; 	
 	// 로그인 된 회원 정보를 저장한 객체를 참조하는 참조변수
-	// -> 로그인X == null, 로그인O != null
+	// -> 로그인X   == null
+	//    로그인O   != null
 	// private Member loginMember = null;
-	
 		
-	// 회원 기능 메뉴
+	// 회원 기능 메뉴 객체 생성
 	private MemberView memberView = new MemberView();
+	
+	// 게시판 기능 메뉴 객체 생성
 	private BoardView boardView = new BoardView();
+	
 	
 	/**
 	 * mainMenu 출력 메서드
@@ -51,11 +54,12 @@ public class MainView {
 					case 0: System.out.println("\n[프로그램 종료]"); break;
 					default: System.out.println("\n[메뉴에 작성된 번호만 입력해주세요.]");
 					}
+					
 				} else { // 로그인이 되었을 때
 					System.out.println("\n***[ 로그인 메뉴]***");
 					System.out.println("1. 회원 기능");
 					System.out.println("2. 게시판 기능");
-					System.out.println("0. 로그아웃");
+					System.out.println("0. 로그아웃"); // 로그아웃하면 메인 메뉴로 
 					System.out.println("99. 프로그램 종료");
 					
 					System.out.print("메뉴 선택 >> ");

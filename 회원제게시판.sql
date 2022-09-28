@@ -11,32 +11,6 @@ GRANT CONNECT, RESOURCE, CREATE VIEW TO member_ksh;
 ALTER USER member_ksh DEFAULT 
 TABLESPACE SYSTEM QUOTA UNLIMITED ON SYSTEM;
 
------------------------------------------------------------
-
--- 전체 회원 조회
-SELECT MEMBER_NO, MEMBER_ID, MEMBER_NM, MEMBER_GENDER, ENROLL_DATE, SECESSION_FL 
-FROM MEMBER
-WHERE SECESSION_FL = 'N';
-
-
--- 아이디 중복 체크 
-SELECT COUNT(*) 
-FROM "MEMBER" 
-WHERE MEMBER_ID = 'user22';
-
--- 새 회원 등록
-INSERT INTO MEMBER VALUES(SEQ_MEMBER_NO.NEXTVAL, 'user', 'pass', '유저','M', DEFAULT, DEFAULT);
-ROLLBACK;
-COMMIT;
-
--- 회원정보 수정(이름, 성별)
-UPDATE MEMBER SET MEMBER_NM = '유ㅜ저', MEMBER_GENDER = 'F' WHERE MEMBER_NO = 22;
-ROLLBACK;
-
--- 회원 정보 삭제()
-UPDATE MEMBER SET SECESSION_FL = 'Y' WHERE MEMBER_NO = 42;
-
-SELECT * FROM MEMBER
 --------------------------------------------------------------------------------
 
 DROP TABLE MEMBER;
