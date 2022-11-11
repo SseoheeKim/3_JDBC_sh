@@ -2,7 +2,7 @@ package edu.kh.jdbc.member.vo;
 
 // VO: 값 저장 용도 객체
 // JDBC에서 1) 테이블의 한 행의 조회 결과 
-// 			2) 삽입, 수정을 위한 데이터를 저장하는 용도의 겍체
+// 	2) 삽입, 수정을 위한 데이터를 저장하는 용도의 객체
 public class Member {
 
 	private int memberNo;
